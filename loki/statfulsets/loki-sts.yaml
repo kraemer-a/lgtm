@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+#  annotations:
+#    kubectl.kubernetes.io/last-applied-configuration: |
+#      {"apiVersion":"apps/v1","kind":"StatefulSet","metadata":{"annotations":{},"name":"loki","namespace":"loki"},"spec":{"replicas":1,"selector":{"matchLabels":{"name":"loki"}},"serviceName":"loki","template":{"metadata":{"labels":{"name":"loki"}},"spec":{"containers":[{"args":["-config.file=/etc/loki/loki.yaml"],"image":"grafana/loki:2.0.0","imagePullPolicy":"IfNotPresent","livenessProbe":{"httpGet":{"path":"/ready","port":"http-metrics"},"initialDelaySeconds":45},"name":"loki","ports":[{"containerPort":3100,"name":"http-metrics"}],"readinessProbe":{"httpGet":{"path":"/ready","port":"http-metrics"},"initialDelaySeconds":45},"volumeMounts":[{"mountPath":"/etc/loki","name":"loki-config"},{"mountPath":"/data","name":"loki-data"}]}],"securityContext":{"fsGroup":10001,"runAsGroup":10001,"runAsNonRoot":true,"runAsUser":10001},"volumes":[{"name":"loki-data","persistentVolumeClaim":{"claimName":"loki-data"}},{"name":"loki-config","secret":{"secretName":"loki-config"}}]}},"updateStrategy":{"type":"RollingUpdate"},"volumeClaimTemplates":[{"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"name":"loki-data"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"10Gi"}}}}]}}
+  name: loki
+  namespace: loki
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: loki
+  serviceName: loki
+  template:
+    metadata:
+      labels:
+        name: loki
+    spec:
+      containers:
+#      - args:
+#        - -config.file=/etc/loki/loki.yaml
+      - image: grafana/loki
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ready
+            port: http-metrics
+            scheme: HTTP
+          initialDelaySeconds: 45
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: loki
+        ports:
+        - containerPort: 3100
+          name: http-metrics
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ready
+            port: http-metrics
+            scheme: HTTP
+          initialDelaySeconds: 45
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+#        volumeMounts:
+#        - mountPath: /etc/loki
+#          name: loki-config
+#        - mountPath: /data
+#          name: loki-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+#      securityContext:
+#        fsGroup: 10001
+#        runAsGroup: 10001
+#        runAsNonRoot: true
+#        runAsUser: 10001
+      terminationGracePeriodSeconds: 30
+#      volumes:
+#      - name: loki-data
+#        persistentVolumeClaim:
+#          claimName: loki-data
+#      - name: loki-config
+#        secret:
+#          defaultMode: 420
+#          secretName: loki-config
+#  updateStrategy:
+#    type: RollingUpdate
+#  volumeClaimTemplates:
+#  - apiVersion: v1
+#    kind: PersistentVolumeClaim
+#    metadata:
+#      name: loki-data
+#    spec:
+#      accessModes:
+#      - ReadWriteOnce
+#      resources:
+#        requests:
+#          storage: 10Gi
+#      volumeMode: Filesystem
+#    status:
+#      phase: Pending
+
