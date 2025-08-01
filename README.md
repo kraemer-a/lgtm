@@ -1,2 +1,2 @@
 # lgtm
-Loki Grafana Tempo mimir - stack
+Loki Grafana tempo mimir - stack
