@@ -44,7 +44,7 @@ data:
                     - instance
                     - pod
                     - namespace
-          name: Tempo
+          name: tempo
           type: tempo
           uid: tempo
           url: http://tempo.tempo.svc.cluster.local/
