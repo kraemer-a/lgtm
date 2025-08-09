@@ -1,7 +1,7 @@
 # lgtm
-Loki Grafana tempo Mimir - stack
+Loki Grafana Tempo Mimir - stack
 
 
 
-tempo gurke
-tempo test
+Tempo gurke
+Tempo test
